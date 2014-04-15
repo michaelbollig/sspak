@@ -17,6 +17,10 @@ An sspak file is either a Phar (executable) file or a Tar (non-executable) file,
         branch = (name)
         sha = (sha-hash)
 
+ * **svn:** A text file of the following form:
+
+        (url)
+
 By convention, the file should have the extension `.sspak` for non-executable versions, and `.sspak.phar` for executable versions.
 
 Installation
@@ -96,7 +100,7 @@ Load only the assets:
 
     $> sspak load --assets dev.sspak ~/Sites/devsite
 
-Install a new site from an sspak (needs to contain a git-remote):
+Install a new site from an sspak (needs to contain a git-remote or svn repo):
 
     $> sspak install newsite.sspak ~/Sites/newsite
 
