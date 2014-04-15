@@ -156,4 +156,15 @@ class Webroot extends FilesystemEntity {
 		$this->exec("cd $this->path && git checkout " . escapeshellarg($details['branch']));
 		return true;
 	}
+
+	/**
+	 * Load a svn WC into this webroot.
+	 * It expects that this WC is an empty directory.
+	 * 
+	 * @param array $details Map of svn details
+	 */
+	function putsvn($details) {
+		$this->exec("cd $this->path && svn co " . escapeshellarg($details['url']) . ' .');
+		return true;
+	}
 }

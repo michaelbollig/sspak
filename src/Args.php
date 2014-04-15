@@ -62,12 +62,12 @@ class Args {
 	function pakParts() {
 		// Look up which parts of the sspak are going to be saved
 		$pakParks = array();
-		foreach(array('assets','db','git-remote') as $part) {
+		foreach(array('assets','db','git-remote','svn') as $part) {
 			$pakParts[$part] = !empty($this->namedArgs[$part]);
 		}
 
 		// Default to db and assets
-		if(!array_filter($pakParts)) $pakParts = array('db' => true, 'assets' => true, 'git-remote' => true);
+		if(!array_filter($pakParts)) $pakParts = array('db' => true, 'assets' => true, 'git-remote' => true, 'svn' => true);
 		return $pakParts;
 	}
 

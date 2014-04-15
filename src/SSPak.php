@@ -41,7 +41,6 @@ class SSPak {
 				"unnamedArgs" => array("sspak file", "destination path"),
 				"method" => "extract"
 			),
-			/*
 			"install" => array(
 				"description" => "Install a .sspak file into a new environment.",
 				"unnamedArgs" => array("sspak file", "new webroot"),
@@ -52,6 +51,7 @@ class SSPak {
 				"unnamedArgs" => array("sspak file", "executable"),
 				"method" => "bundle",
 			),
+			/*
 			"transfer" => array(
 				"description" => "Transfer db & assets from one site to another (not implemented yet).",
 				"unnamedArgs" => array("src webroot", "dest webroot"),
@@ -161,6 +161,7 @@ class SSPak {
 		$dbFile = "$buildFolder/database.sql.gz";
 		$assetsFile = "$buildFolder/assets.tar.gz";
 		$gitRemoteFile = "$buildFolder/git-remote";
+		$svnFile = "$buildFolder/svn";
 
 		// Files to include in the .sspak.phar file
 		$fileList = array();
@@ -183,6 +184,11 @@ class SSPak {
 		// Save git-remote
 		if($pakParts['git-remote']) {
 			$this->getgitremote($webroot, $sspak, basename($gitRemoteFile));
+		}
+
+		// Save svn
+		if($pakParts['svn']) {
+			$this->getsvn($webroot, $sspak, basename($svnFile));
 		}
 
 		// Remove the build folder
@@ -270,6 +276,26 @@ class SSPak {
 		return false;
 	}
 
+	function getsvn($webroot, $sspak, $svnFile) {
+		// Only do anything if we're in an SVN WC
+		$svnRepo = $webroot->getPath();
+		if($webroot->exists($svnRepo)) {
+			// Identify current repo and path
+			$output = $webroot->exec(array('svn info '.$svnRepo));
+			if(preg_match("/(URL:)(.*)\n/", $output['output'], $matches)) {
+				// If there is a current repo, use it.
+				$content = trim($matches[2]);
+			} else {
+				$content = null;
+			}
+
+			$sspak->writeFile($svnFile, $content);
+
+			return true;
+		}
+		return false;
+	}
+
 	/**
 	 * Load an .sspak into an environment.
 	 * Does not backup - be careful! */	
@@ -325,6 +351,11 @@ class SSPak {
 		if($sspak->contains('git-remote')) {
 			$details = $sspak->gitRemoteDetails();
 			$webroot->putgit($details);
+		}
+
+		if($sspak->contains('svn')) {
+			$details = $sspak->svnDetails();
+			$webroot->putsvn($details);
 		}
 
 		// TODO: composer install needed.

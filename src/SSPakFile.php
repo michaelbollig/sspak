@@ -145,4 +145,13 @@ STUB;
 		}
 		return $details;
 	}
+
+	/**
+	 * Extracts the svn details and reutrns them as a map
+	 */
+	function svnDetails() {
+		$content = $this->content('svn');
+		$details['url'] = $content;
+		return $details;
+	}
 }
